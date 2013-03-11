@@ -1,0 +1,13 @@
+#program displays multiplication table for 1 to 10
+
+print "The multiplication table:"
+for i in range(1,11):
+	for j in range(1,11):
+	#	if j == 10:             # check if its last number inorder to print end of line
+		#	print j * i,'\t'
+	#	else:
+			print j * i,'\t',
+	print 
+	
+
+

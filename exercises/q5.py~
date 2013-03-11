@@ -1,0 +1,32 @@
+# program 
+
+name=''
+population=0
+isCapital=''
+income=0
+pop_str=''
+inc_str=''
+out_str=''
+metropoly = True
+
+name= raw_input("Name of city: ")
+population = int(raw_input("Population of city: "))
+income=int(raw_input("Annual average income: "))
+isCapital = raw_input("Is this a captal city- enter 'yes' or 'no'")
+
+
+if population < 100000:
+	out_str = "population less then 100000 "
+	metropoly = False
+if income < 720000000:
+	out_str = out_str + "annual average income less then 720 000 000" 
+	metropoly = False
+
+if metropoly:
+	print "this is a metroploy, population > 100 000, annual average income > 720 000 000"
+else:
+	print "this is NOT a metropoly, ",out_str
+
+
+
+
