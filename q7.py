@@ -21,6 +21,9 @@ population=0
 income=0
 capital=''
 
+
+
+# function to check if city is a metropoly, returns True or False
 def isMetropoly(capital,population,income):
 	if (capital == 'yes') and (population > 100000):
 		return True
@@ -29,7 +32,7 @@ def isMetropoly(capital,population,income):
 			return True
 		else:
 			return False
-			
+#----end of function			
 
 
 #main program start - will loop and obtain 7 inputs
