@@ -1,0 +1,7 @@
+To make the program code reusable and to use the code from question 1, question 2 and question3 
+the code of each question except question 4 was written as a module that could be reused.
+
+To test whether the questions work, run question1Test,question2Test and question3Test
+
+
+
