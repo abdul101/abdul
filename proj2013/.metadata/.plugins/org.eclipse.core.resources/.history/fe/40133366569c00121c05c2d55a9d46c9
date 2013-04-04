@@ -1,0 +1,69 @@
+#edits sheet
+import validation
+import funct
+import globalVar
+
+
+#edit sheet details
+def editSheet(dicHelix,dicSheet,dicChain):
+    sheetNo,chainID=validation.sheetNoValid_S(dicSheet)
+#                if helixNo == None:
+    newChainID=validation.chainValid(chainID,dicChain)
+
+    initSeqNum=validation.initSeqNumValid_S(sheetNo, dicHelix,dicSheet,newChainID,dicChain)
+    
+    endSeqNum =validation.endSeqNumValid_S(sheetNo, dicHelix,dicSheet,newChainID,dicChain,initSeqNum)
+        
+    curAtom = validation.currentAtom(sheetNo, dicSheet)
+    
+    curResName=validation.currentResName(sheetNo, dicSheet)
+    
+    curReSseq=validation.currentResSeq(sheetNo, dicSheet)
+    
+    
+    
+    prevAtom = validation.prevAtom(sheetNo, dicSheet)
+    
+    prevResName =validation.prevResName(sheetNo, dicSheet)
+    
+    prevChainID=validation.prevChainId(sheetNo, dicSheet,dicChain)
+    
+    prevResSeq= validation.prevResSeq(sheetNo, dicSheet)
+    
+   
+    
+    lstSheet = dicSheet[sheetNo]
+    lstChain= dicChain[newChainID]
+    initResName=funct.getCodon(lstChain[0][int(initSeqNum)])
+    endResName=funct.getCodon(lstChain[0][int(endSeqNum)])
+    
+    line = ('%6s %3s %3s %2s %3s %1s%4s%1s %3s %1s%4s%1s%2s %4s%3s %1s%4s%1s %4s%3s %1s%4s%1s') %('SHEET ',lstSheet[0],lstSheet[1],lstSheet[2],initResName,newChainID,initSeqNum,"",endResName,newChainID,endSeqNum,"",lstSheet[11],curAtom,curResName,newChainID,curReSseq, "",prevAtom,prevResName,prevChainID,prevResSeq,"")                                               
+    
+    return line,sheetNo
+        
+    
+#updates fil list with changes   
+def editSheetFileLst(line):
+   
+    
+    for i in range(len(globalVar.lstFile)):
+        if globalVar.lstFile[i][0:6].strip()=='SHEET':
+            if line[7:10].strip()==globalVar.lstFile[i][7:10].strip() and line[11:14].strip()==globalVar.lstFile[i][11:14].strip():
+                globalVar.lstFile[i]= line        
+                return None
+    
+    return 'Error editing'
+
+
+#main program for editing sheet
+def mainEditSheet(dicHelix,dicSheet,dicChain):
+    
+    line,sheetNo = editSheet(dicHelix,dicSheet,dicChain)
+
+    strEdit = editSheetFileLst(line)
+    if strEdit == None:
+        print 'The sheet %d has been successfully edited. ' % sheetNo  
+    else:
+        print strEdit
+        
+  

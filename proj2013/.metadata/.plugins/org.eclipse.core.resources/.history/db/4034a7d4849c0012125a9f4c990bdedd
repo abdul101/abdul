@@ -1,0 +1,630 @@
+import funct
+
+def helixClass(no):
+    
+    helix_class={
+     1: 'Right-handed alpha', 2: 'Right-handed omega', 3: 'Right-handed pi', 4: 'Right-handed gamma', 
+     5: 'Right-handed 3 - 10', 6: 'Left-handed alpha', 7: 'Left-handed omega', 8: 'Left-handed gamma', 9: '2-7 ribbon/helix', 10: 'Polyproline'
+     }
+    return helix_class[no]
+
+
+#validates start sequence of helix
+def seqStartHelix_H(seqNo,helixNo,dicHelix,chainID):
+    for i in dicHelix:
+        
+        lstHelix= dicHelix[i]
+        if int(lstHelix[0]) == helixNo:
+            if seqNo >= lstHelix[8]:
+                return "Error, sequence Number past end sequence"
+            
+        if int(lstHelix[0]) != int(helixNo):
+            if (seqNo in range(int(lstHelix[4])-1,int(lstHelix[8]))) and chainID==lstHelix[3]:
+                return "Error, sequence Number not available "
+    return None
+
+
+#validates end sequence of helix
+def seqEndHelix_H(seqNo,dicHelix,chainID,initSeqNum):
+    for i in dicHelix:
+        lstHelix=dicHelix[i] 
+        if seqNo != int (lstHelix[0]):
+            if (seqNo in range(int(lstHelix[4])-1,int(lstHelix[8]))) and chainID==lstHelix[3]:
+                return "Error, sequence Number not available: "
+        else:
+            if seqNo <= initSeqNum:
+                return "Error sequence end before start: "
+    return None
+
+#validates start sequence of sheet
+def seqStartSheet_H(seqNo,dicSheet,chainID):
+    if seqNo <=0:
+        return "Error, invalid sequence number: "
+
+    for i in sorted(dicSheet):
+        lstSheet= dicSheet[i]
+        if i != seqNo:
+            if (seqNo in range(int(lstSheet[5])-1,int(lstSheet[9]))) and chainID==lstSheet[4]:
+                return "Error, sequence Number not available: "
+    return None
+
+
+#validates end sequence number in sheet
+def seqEndSheet_H(seqNo,dicSheet,chainID):
+    for i in dicSheet:
+        lstSheet= dicSheet[i]
+        if i != seqNo:
+            if (seqNo in range(int(lstSheet[5])-1,int(lstSheet[9]))) and chainID==lstSheet[4]:
+                return "Error, sequence Number not available: "
+    return None
+
+    
+#gets helix number to edit
+def helixNoValid_H(dicHelix):
+    inpStr='Which Helix do you want to edit (1-%d): ' % len(dicHelix)
+    do = True
+    while do:
+        inp=raw_input(inpStr)
+        if int(inp) in range(1,len(dicHelix) + 1):
+            lst = dicHelix[int(inp)]
+            return int(inp),lst[3]
+        else:           
+            inpStr = 'Error, select Helix in range (1-%d): ' % (len(dicHelix))
+
+ 
+ #main function to check valid initial sequence number          
+def initSeqNumValid_H(helixNo,dicHelix,dicSheet,chainID,dicChain):
+    if helixNo >= len(dicHelix):        #use same function to add and edit helix, checks if adding helix
+        inpStr ='initSeqNum: '          # when adding new helix there is no default number
+    else:
+        lstHelix=dicHelix[helixNo]
+        inpStr='initSeqNum [%s]: ' % lstHelix[4]   #display defauly value when editing
+        
+    lstChain=dicChain[chainID]
+        
+    
+    do = True
+    while do:
+    
+        inp=raw_input(inpStr)
+        if inp.isdigit() and  int(inp) < len(lstChain[0]):
+            seqStr = seqStartHelix_H(int(inp),helixNo,dicHelix,chainID)
+        
+            if seqStr != None:
+                inpStr = seqStr
+            else:
+                seqStr = seqStartSheet_H(int(inp),dicSheet,chainID)
+                if seqStr != None:
+                    inpStr = seqStr
+                else:
+                    lstChain = dicChain[chainID]
+                            
+                    inpStr = 'That position correspond to the amino acid %s.' % funct.getCodon(lstChain[0][int(inp)-1])
+                    print inpStr
+                    return int(inp)
+        else:
+
+            inpStr = 'Error- initSeqNum must be less than %s : ' % len(lstChain[0])
+        
+
+#main function for checking end sequence number    
+def endSeqNumValid_H(helixNo,dicHelix,dicSheet,chainID,dicChain,initSeqNum):
+    if helixNo >= len(dicHelix):                        #checks if adding new helix
+        inpStr ='endSeqNum: '
+    else:
+        lstHelix=dicHelix[helixNo]
+        inpStr=inpStr='endSeqNum [%s] :' % lstHelix[8]  # if editing helix display default value
+       
+    lstChain=dicChain[chainID]
+        
+    
+    do = True
+    while do:
+    
+        inp=raw_input(inpStr)
+        if inp.isdigit() and  (int(inp)  > initSeqNum ) and (int(inp) < len(lstChain[0]) ):
+            seqStr = seqEndHelix_H(int(inp),dicHelix,chainID,initSeqNum)
+        
+            if seqStr != None:
+                inpStr = seqStr
+            else:
+                seqStr = seqEndSheet_H(int(inp),dicSheet,chainID)
+               
+                if seqStr != None:
+                    inpStr = seqStr
+                else:
+                    lstChain = dicChain[chainID]
+                            
+                    inpStr = 'That position correspond to the amino acid %s.' % funct.getCodon(lstChain[0][int(inp)-1])
+                    print inpStr
+                    return int(inp)
+        else:
+            inpStr = 'Error, initSeqNum must be between %s  and %s: ' % (initSeqNum,len(lstChain[0])) 
+            
+
+
+def helixClassValid(helixNo,dicHelix):
+    if helixNo >= len(dicHelix):
+        inpStr ='Helix Class: '
+    else:
+        lstHelix=dicHelix[helixNo]
+        inpStr='Helix Class[%s] :' % helixClass(int(lstHelix[10]))
+    
+    
+    do = True
+    while do:
+    
+        inp=raw_input(inpStr)
+        if int(inp) in range(1,11):
+            print 'The selected class was: %s' % helixClass(int(inp))
+            return inp
+        else:
+            inpStr='Invalid entry - enter number between 1 and 10: '
+            
+            
+def numStrands():
+    inpStr='numStrands: '
+    do = True
+    while do:
+        inp = raw_input(inpStr)
+        if inp.isdigit():
+            return inp
+        else:
+            inpStr ='Error, numbers only: '
+    
+
+def chainValid(chain,dicChain):
+    if chain == 'None':
+        inpStr='Chain : ' 
+    else:
+        inpStr='Chain [%s] : ' % chain
+        
+    do = True
+    while do:
+    
+        inp=raw_input(inpStr)
+        if inp.upper() in dicChain :
+            return inp.upper()
+        else:
+            inpStr = 'Chain ID must be single character in %s : ' % dicChain.keys()  
+
+
+
+def comment_H(helixNo,dicHelix):
+    if helixNo >= len(dicHelix):
+        inpStr ='Comment : '
+    else:
+        lstHelix=dicHelix[helixNo]
+        inpStr='Comment[%s] : ' % lstHelix[11]
+    
+    do = True
+    while do:
+    
+        inp=raw_input(inpStr)
+        if len(inpStr) > 30:
+            'Comment cannot be longer then 30 characters: '
+        else:
+            return inp
+
+
+def sheetNoValid_S(dicSheet):
+    inpStr='Which Sheet do you want to edit (1-%d): ' % len(dicSheet)
+    do = True
+    while do:
+        inp=raw_input(inpStr)
+        if inp.isdigit():
+            
+            if int(inp) not in range(1,len(dicSheet) + 1):
+                inpStr = 'select Sheet in range (1-%s): ' % (len(dicSheet))
+            else:             
+                for i in sorted(dicSheet):
+                    if i == int(inp):
+                        lst = dicSheet[i]
+                        return int(inp),lst[4]
+        else:
+            inpStr = 'select Sheet in range (1-%s): ' % (len(dicSheet))
+    
+
+                
+                        
+def seqStartSheet_S(seqNo,sheetNo,dicSheet,chainID):
+    
+    for i in sorted(dicSheet):
+        
+        lstSheet= dicSheet[i]
+        if i == sheetNo:
+            if seqNo >= lstSheet[9]:
+                return "Error, sequence Number past end sequence: "
+            
+        if i != sheetNo:
+            if (seqNo in range(int(lstSheet[5])-1,int(lstSheet[9]))) and chainID==lstSheet[4]:
+                return "Error, sequence Number not available: "
+    return None
+
+def seqStartSheet(seqNo,dicSheet,chainID):
+    
+    for i in sorted(dicSheet):
+        
+        lstSheet= dicSheet[i] 
+
+        if (seqNo in range(int(lstSheet[5])-1,int(lstSheet[9]))) and chainID==lstSheet[4]:
+                return "Error, sequence Number not available: "
+    return None
+
+
+def seqStartHelix_S(seqNo,dicHelix,chainID):
+    for i in dicHelix:   
+        lstHelix=dicHelix[i] 
+        if i != seqNo:    
+            if (seqNo in range(int(lstHelix[4])-1,int(lstHelix[8]))) and chainID==lstHelix[3]:
+                return "Error, sequence Number not available: "
+    return None
+
+
+
+def initSeqNumValid(dicHelix,dicSheet,chainID,dicChain):
+    
+    lstChain=dicChain[chainID]
+        
+    inpStr='initSeqNum : ' 
+    do = True
+    while do:
+        inp=raw_input(inpStr)
+        if inp.isdigit():      
+            if int(inp) < len(lstChain[0]) and int(inp) >=1 :
+                seqStr = seqStartSheet(int(inp),dicSheet,chainID)
+        
+                if seqStr != None:
+                    inpStr = seqStr
+                else:
+                    seqStr = seqStartHelix_S(int(inp),dicHelix,chainID)
+                    if seqStr != None:
+                        inpStr = seqStr
+                    else:
+                        lstChain = dicChain[chainID]
+                            
+                        inpStr = 'That position correspond to the amino acid %s' % funct.getCodon(lstChain[0][int(inp)-1])
+                        print inpStr
+                        print
+                        return inp
+            
+            else:
+                inpStr = 'Error, numbers only and  initSeqNum must be between (1 - %s): ' % len(lstChain[0])    
+        else:
+            inpStr = 'Error, numbers only and  initSeqNum must be between (1 - %s): ' % len(lstChain[0])  
+          
+          
+#main function for checking intitial seq number sheet          
+def initSeqNumValid_S(SheetNo,dicHelix,dicSheet,chainID,dicChain):
+    lstSheet=dicSheet[SheetNo]   
+    lstChain=dicChain[chainID]
+        
+    inpStr='initSeqNum [%s] : ' % lstSheet[5]           #default value when editing sheet
+    do = True
+    while do:
+        inp=raw_input(inpStr)
+        if inp.isdigit():      
+            if int(inp) < len(lstChain[0]) and int(inp) >=1 and int(inp) < int(lstSheet[9]):
+                seqStr = seqStartSheet_S(int(inp),SheetNo,dicSheet,chainID)
+        
+                if seqStr != None:
+                    inpStr = seqStr
+                else:
+                    seqStr = seqStartHelix_S(int(inp),dicHelix,chainID)
+                    if seqStr != None:
+                        inpStr = seqStr
+                    else:
+                        lstChain = dicChain[chainID]
+                            
+                        inpStr = 'That position correspond to the amino acid %s' % funct.getCodon(lstChain[0][int(inp)-1])
+                        print inpStr
+                        print
+                        return inp
+            
+            else:
+                inpStr = 'Error, numbers only and  initSeqNum must be between (1 - %s): ' % lstSheet[9]    
+        else:
+            inpStr = 'Error, numbers only and  initSeqNum must be between (1 - %s): ' % lstSheet[9] 
+            
+def seqEndHelix_S(seqNo,dicHelix,chainID):
+    for i in sorted(dicHelix):
+        lstHelix= dicHelix[i]
+        
+        if (seqNo in range(int(lstHelix[4])-1,int(lstHelix[8]))) and chainID==lstHelix[3]:
+                return "Error, sequence Number not available: "
+    return None
+
+def seqEndSheet_S(seqNo,dicSheet,chainID,sheetNo):
+    for i in sorted(dicSheet):
+        lstSheet= dicSheet[i]
+        if i == sheetNo:
+            if seqNo <= int(lstSheet[5]):
+                return 'Error - end sequence number before start: '
+        else:
+            if (seqNo in range(int(lstSheet[5])-1,int(lstSheet[9]))) and chainID==lstSheet[4]:
+                return "Error, sequence Number not available: "
+    return None
+
+def seqEndSheet(seqNo,dicSheet,chainID):
+    for i in sorted(dicSheet):
+        lstSheet=dicSheet[i]
+        if (seqNo in range(int(lstSheet[5])-1,int(lstSheet[9]))) and chainID==lstSheet[4]:
+            return "Error, sequence Number not available: "
+    return None
+
+def endSeqNumValid(dicHelix,dicSheet,chainID,dicChain,initSeqNum):
+    lstChain=dicChain[chainID]
+        
+    inpStr='endSeqNum :' 
+    do = True
+    while do:
+        inp = raw_input(inpStr)
+        if inp.isdigit():
+            if   (int(inp)  > int(initSeqNum) ) and (int(inp) <= len(lstChain[0]) ):
+                seqStr = seqEndHelix_S(int(inp),dicHelix,chainID)
+                if seqStr != None:
+                    inpStr = seqStr
+                else:
+                    seqStr = seqEndSheet(int(inp),dicSheet,chainID)
+               
+                if seqStr != None:
+                    inpStr = seqStr
+                else:
+                    lstChain = dicChain[chainID]        
+                    inpStr = 'That position correspond to the amino acid %s' % funct.getCodon(lstChain[0][int(inp)-1])
+                    print inpStr
+                    return inp
+            else:
+                inpStr = 'Error, endSeqNum must be between (%s - %s): ' % (initSeqNum,len(lstChain[0])) 
+        else:
+            inpStr = 'Error, endSeqNum must be between (%s - %s): ' % (initSeqNum,len(lstChain[0])) 
+            
+            
+def endSeqNumValid_S(sheetNo,dicHelix,dicSheet,chainID,dicChain,initSeqNum):
+    lstSheet=dicSheet[sheetNo]   
+    lstChain=dicChain[chainID]
+        
+    inpStr='endSeqNum [%s] :' % lstSheet[9]
+    do = True
+    while do:
+        inp = raw_input(inpStr)
+        if inp.isdigit():
+            if   (int(inp)  > int(initSeqNum) ) and (int(inp) <= len(lstChain[0]) ):
+                seqStr = seqEndHelix_S(int(inp),dicHelix,chainID)
+                if seqStr != None:
+                    inpStr = seqStr
+                else:
+                    seqStr = seqEndSheet_S(int(inp),dicSheet,chainID,sheetNo)
+               
+                if seqStr != None:
+                    inpStr = seqStr
+                else:
+                    lstChain = dicChain[chainID]        
+                    inpStr = 'That position correspond to the amino acid %s' % funct.getCodon(lstChain[0][int(inp)-1])
+                    print inpStr
+                    return inp
+            else:
+                inpStr = 'Error, endSeqNum must be between (%s - %s): ' % (initSeqNum,len(lstChain[0])) 
+        else:
+            inpStr = 'Error, endSeqNum must be between (%s - %s): ' % (initSeqNum,len(lstChain[0])) 
+            
+def currentAtom(sheetNo,dicSheet):
+    if sheetNo == 'None':
+        inpStr = 'curAtom : '
+    else:
+        lstSheet= dicSheet[sheetNo]
+        inpStr = 'curAtom [%s] : ' % lstSheet[12]
+        
+        
+   
+    do = True
+    
+    while do:
+        inp = raw_input(inpStr)
+        if inp == "":
+            return inp
+        if not inp.isdigit():
+            inp = inp.upper()
+            
+        if inp.isalpha() and len(inp) == 1:
+            return inp.upper()
+        else:
+            inpStr='Error - single alphabet letter only: '
+
+def prevAtom(sheetNo,dicSheet):
+    if sheetNo == 'None':
+        inpStr = 'prevAtom : '
+    else:
+        lstSheet= dicSheet[sheetNo]
+        inpStr = 'prevAtom [%s] : ' % lstSheet[17]
+        
+    do = True
+    
+    while do:
+        inp = raw_input(inpStr)
+        if inp =='':
+            return inp
+        
+        inp = raw_input(inpStr)
+        if not inp.isdigit():
+            inp = inp.upper()
+            
+        if inp.isalpha() and len(inp) == 1:
+            return inp.upper()
+        else:
+            inpStr='Error - single alphabet letter only: '
+    
+
+def currentResName(sheetNo,dicSheet):
+    if sheetNo == 'None':
+        inpStr = 'currentResName : '
+    else:
+        lstSheet= dicSheet[sheetNo]
+        inpStr = 'currentResName [%s] : ' % lstSheet[13]
+        
+
+    do = True
+    
+    while do:
+        inp = raw_input(inpStr)
+        if inp=='':
+            return inp
+        if not inp.isdigit():
+            inp = inp.upper()
+            
+        if inp.isalpha() and len(inp) <= 3:
+            codStr = funct.getCodon(inp)
+            if codStr == None:
+                inpStr= 'Error invalid sequence, enter one letter or three letter sequence: '
+            else:
+                if len(codStr) == 1:
+                    codStr = funct.getCodon(codStr)
+                return codStr
+            
+        else:
+            inpStr='Error invalid sequence, enter one letter or three letter sequence: '
+
+
+def prevResName(sheetNo,dicSheet):
+    if sheetNo == 'None':
+        inpStr = 'prevResName : '
+    else:
+        lstSheet= dicSheet[sheetNo]
+        inpStr = 'prevResName [%s] : ' % lstSheet[18]
+        
+
+    do = True
+    
+    while do:
+        
+        inp = raw_input(inpStr)
+        if inp=='':
+            return inp
+        if not inp.isdigit():
+            inp = inp.upper()
+            
+        if inp.isalpha() and len(inp) <= 3:
+            codStr = funct.getCodon(inp)
+            if codStr == None:
+                inpStr= 'Error invalid sequence, enter one letter or three letter sequence: '
+            else:
+                if len(codStr) == 1:
+                    codStr = funct.getCodon(codStr)
+                return codStr
+            
+        else:
+            inpStr='Error invalid sequence, enter one letter or three letter sequence: '
+
+
+def currentResSeq(sheetNo,dicSheet):
+    if sheetNo == 'None':
+        inpStr = 'currentResSeq : '
+    else:
+        lstSheet= dicSheet[sheetNo]
+        inpStr = 'currentResSeq [%s] : ' % lstSheet[15]
+        
+   
+    do = True
+    
+    while do:
+        inp = raw_input(inpStr)
+        if inp=='':
+            return inp
+        
+        if inp.isdigit() and len(inp) <= 3:
+            return int(inp)
+        else:
+            inpStr='Error - numbers only: '
+ 
+            
+def prevResSeq(sheetNo,dicSheet):
+    if sheetNo == 'None':
+        inpStr = 'prevResSeq : '
+    else:
+        lstSheet= dicSheet[sheetNo]
+        inpStr = 'prevResSeq [%s] : ' % lstSheet[15]
+        
+    
+    do = True
+    
+    while do:
+        inp = raw_input(inpStr)
+        if inp=='':
+            return inp
+        
+        if inp.isdigit() and len(inp) <= 3:
+            return int(inp)
+        else:
+            inpStr='Error - numbers only: '
+            
+            
+# def currentIcode(sheetNo,dicSheet):
+#     lstSheet= dicSheet[sheetNo]
+#     do = True
+#     inpStr = 'currentIcode [%s] : ' % lstSheet[16]
+#     while do:
+#         inp = raw_input(inpStr)
+            #if inp=='':
+            #return inp
+#         if inp.isdigit()() and len(inp) <= 3:
+#             return int(inp)
+#         else:
+#             inpStr='Error - numbers only: '
+#             
+            
+            
+            
+            
+def prevChainId(sheetNo,dicSheet,dicChain):
+    if sheetNo == 'None':
+        inpStr = 'prevChainID : '
+    else:
+        lstSheet= dicSheet[sheetNo]
+        inpStr = 'prevChainID [%s] : ' % lstSheet[19]
+        
+    
+    lstChain=dicChain.keys()
+    do = True
+    
+    while do:
+        inp = raw_input(inpStr)
+        if inp=='':
+            return inp
+        
+        if not inp.isdigit():
+            inp = inp.upper()
+        
+        if inp in lstChain:
+            return inp.upper()
+        else:
+            inpStr='Error - select one of these chains , %s: ' %lstChain
+            
+
+
+def getSense():
+    inpStr='sense: '
+    do = True    
+    while do:
+        inp = raw_input(inpStr)
+        
+        if inp.isdigit():
+            if int(inp) in [-1,0,1]:
+                return int(inp)
+            else:
+                inpStr = 'error, sense should be [-1,0,1]:  '
+        else:
+            inpStr = 'error, sense should be [-1,0,1]:  '
+                
+#def prevIcode(sheetNo,dicSheet):
+#    lstSheet= dicSheet[sheetNo]
+#    do = True
+#    inpStr = 'prevIcode [%s] : ' % lstSheet[16]
+#    while do:
+#        inp = raw_input(inpStr)
+#        if inp=='':
+#            return inp
+#        if inp.isdigit()() and len(inp) <= 3:
+#            return int(inp)
+#        else:
+#            inpStr='Error - numbers only: '
+#             

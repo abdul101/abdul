@@ -1,0 +1,25 @@
+lstFile=[]   #stores file info in list
+fileName='None'  #FileName
+saveFileName=''  #FileName of the export data
+path='' #path of filename
+pathExport='' #path of export data
+
+
+#def asignLstFile(lst):
+#    global lstFile
+#    lstFile = lst
+#    
+#
+#def assignFileName(filename):
+#    global fileName
+#    fileName = filename
+#    
+#def assignPath(Path):
+#    global path
+#    path = Path
+#    
+#def saveFileName(filename):
+#    global fileName
+#    fileName = filename
+#    
+

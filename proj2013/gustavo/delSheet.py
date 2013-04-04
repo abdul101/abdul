@@ -1,0 +1,124 @@
+#deletes sheet
+import validation
+import funct
+import globalVar
+
+#update indexes ufter sheet been deleted
+def updateIndex():
+    tmpDic={}
+    j=0
+   
+    for i in range(1,len(globalVar.lstFile)):
+        if globalVar.lstFile[i][0:6].strip()=='SHEET':
+            a= globalVar.lstFile[i][7:10].strip()
+            #index = int(globalVar.lstFile[i][7:10].strip())
+            tmpDic[j]=(i,globalVar.lstFile[i])
+            j +=1
+            
+    newDic={}        
+    counter= len(tmpDic) + 1
+    
+    
+    for i in sorted(tmpDic):
+        lstSheet = tmpDic[i]
+        curStrandNo = lstSheet[1][7:10]
+        curSheetID = lstSheet[1][11:14]
+        curNumStrand = lstSheet[1][14:16]
+        
+        if len(newDic)==0:
+            newDic[i]=lstSheet
+        else:
+            lst = newDic[i-1]
+            prevStrandNo = lst[1][7:10]
+            prevSheetID = lst[1][11:14]
+            prevNumStrand = lst[1][14:16]
+            
+            if (curSheetID == prevSheetID) and (int(curStrandNo) - int(prevStrandNo) == 1):
+                newDic[i] = lstSheet
+            else:
+                if curSheetID != prevSheetID:
+                    newDic[i] = lstSheet
+                else:
+                    line = lstSheet[1]
+                    newLine ='SHEET  %3s %3s%s' % (str(int(curStrandNo)-1),curSheetID,line[14:76])+'\n'
+                    newDic[i] =(lstSheet[0],newLine)
+    
+    for i in newDic:
+        lst=newDic[i]
+        globalVar.lstFile[lst[0]]=lst[1]
+
+    
+
+#display menu
+def menuSheetNoDel(dicSheet):
+    inpStr='Which Sheet do you want to remove (1-%d): ' % len(dicSheet)
+    do = True
+    while do:
+        inp=raw_input(inpStr)
+        if inp.isdigit():
+            
+            if int(inp) not in range(1,len(dicSheet) + 1):
+                inpStr = 'select Sheet in range (1-%s): ' % (len(dicSheet))
+                
+            else:
+                return int(inp)
+    
+#get strandID and sheet ID of sheet o delete
+def getStrandSheetID(sheetNo,dicSheet):
+    for i in sorted(dicSheet):
+        lstSheet = dicSheet[i]
+        if int(lstSheet[0])== sheetNo:
+            return lstSheet[0].strip(),lstSheet[1].strip()
+        
+    return None,None
+    
+    
+#delete sheet from list file   
+def delSheetFileLst(strandNo,sheetID,sheetNo):
+    for i in range(len(globalVar.lstFile)):
+        if globalVar.lstFile[i][0:6].strip()=='SHEET':
+            if strandNo==globalVar.lstFile[i][7:10].strip() and sheetID==globalVar.lstFile[i][11:14].strip():
+                globalVar.lstFile.pop(i)     
+                return None
+    return 'Error deleting sheet %s' % sheetNo
+    
+
+
+# display and confirms deletes of Sheet   
+def menuConf(sheetNo,dicSheet):
+    lst = dicSheet[sheetNo]
+    print 'Are you sure do you want to delete the sheet?'
+    print '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s' % ('SHEET',lst[0],lst[1],lst[2],lst[3],lst[4],lst[6],lst[7],lst[8],lst[10])
+    do = True
+    inpStr='Y/N? '
+    while do:
+        inp = raw_input(inpStr)
+        if inp.upper() == 'Y' or inp.upper()=='N':
+            return inp.upper()
+        else:
+            inpStr = ' Error - Enter Y/N: '
+
+
+
+#main program      
+def mainDelSheet(dicSheet):
+
+    sheetNo = menuSheetNoDel(dicSheet)    #sheetNo to delete
+    strandNo,sheetID = getStrandSheetID(sheetNo,dicSheet)   # identify sheetNo and sheetID from sheetNO
+    strConf =menuConf(sheetNo,dicSheet)   #confirm
+    if strConf =='Y':
+        
+        strDel = delSheetFileLst(strandNo,sheetID,sheetNo)      #delete sheet from main file list
+    
+        if strDel == None:
+            updateIndex()                                       #updates the indexes
+            print
+            print 'The sheet %d has been successfully removed. ' % sheetNo  
+            print 'All the serial numbers have been updated.'
+            print
+        else:
+            print strDel 
+        
+  
+
+    

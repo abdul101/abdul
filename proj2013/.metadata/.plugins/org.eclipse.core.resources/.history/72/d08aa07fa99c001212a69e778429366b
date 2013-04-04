@@ -1,0 +1,106 @@
+# def printOutputStr(sequence,structStr,structLabelStr,dicDBref,chain,pdbID):
+#     print 'Secondary Structure of the PDB id %s:' % pdbID
+#     print 'Chain %s:' % chain
+#     print '(%s)' % lstDBref[2]
+#         
+#                 index=0
+#                 while index<len(sequence):
+#                     seq=''
+#                     struct=''
+#                     labels=''
+#                     seq = sequence[index:index+80]
+#                     struct = structStr[index:index+80]
+#                     labels = structLabelStr[index:index+80]
+#                     print seq
+#                     print struct
+#                     print labels
+#             
+#                     index +=80
+#             
+#                 
+#                 
+#             print '(%s)' % lstDBref[3]
+
+def pdbID(dicDBref):
+    for i in dicDBref:
+        lst=dicDBref[i]
+        return lst[0]
+    
+def seqStartNo(dicDBref,chain):
+    for i in dicDBref:
+        lst=dicDBref[i]
+        if lst[1] == chain:
+            return lst[2]
+
+
+
+
+def disp2Struct(dicChain,dicHelix,dicSheet,dicDBref):
+    print 'Secondary Structure of the PDB id %s:' % pdbID(dicDBref)
+    
+    seq=''
+    secondStructLst=[]
+    secondLabelsList=[]
+    for chain in sorted(dicChain):
+        
+        lstChain= dicChain[chain]
+        seq = lstChain[0]
+        
+        secondStructLst= list('-' * len(seq))
+        secondLabelsList = list(" " * len(seq))
+        
+        for i in sorted(dicHelix):
+            lstHelix = dicHelix[i]
+            if lstHelix[3] == chain:
+                for index in range((int(lstHelix[4])-1),int(lstHelix[8])):
+                    secondStructLst[index]='/'
+                    
+                secondLabelsList[(int(lstHelix[4])-1)]=lstHelix[0]
+                                    
+        for i in dicSheet:
+            lstSheet = dicSheet[i]
+            if lstSheet[4] == chain:
+                for index in range((int(lstSheet[5])-1),int(lstSheet[9])):
+                    secondStructLst[index]= '|'
+                
+                secondLabelsList[int(lstSheet[5])-1]=lstSheet[0]
+                secondLabelsList[int(lstSheet[5])]= lstSheet[1]
+                
+                
+        
+        
+        
+        structStr=''
+        structLabel=''
+        seqStr=''
+        structStr="".join(secondStructLst)
+        structLabelStr ="".join(secondLabelsList)
+        index=0
+        struct=''
+        labels=''
+        
+        print 'Chain %s:' % chain
+        print '(%s)' % seqStartNo(dicDBref,chain)
+        
+        while index<len(seq):
+            
+            seqStr = seq[index:index+80]
+            struct = structStr[index:index+80]
+            labels = structLabelStr[index:index+80]
+            print seqStr
+            print struct
+            print labels
+            index +=80
+            
+                
+        print        
+        print '(%s)' % lstChain[1]
+        print 
+#         strucStr=''    
+#         structLabel=''
+#         strucStr="".join(secondStructLst)
+#         structLabel ="".join(secondLabelsList)
+#         printOutputStr(seq,strucStr,structLabel,dicDBref,dicChain,pdbID)
+#                 
+#     
+        

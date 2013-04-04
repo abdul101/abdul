@@ -1,0 +1,134 @@
+import globalVar
+import funct
+import os.path
+import time
+
+
+
+def getFile(filename):
+    try:
+        index =filename.index('/')          #used to trigger excption, find returns -1 which could indicate last position
+        index =filename.rfind('/')
+        path = filename[:index +1] 
+        filename = filename[index+1:]
+        
+
+        if os.path.isfile(path + filename):
+            return path+filename,filename,path
+        
+        elif os.path.isfile(path + filename  +'.pdb'):
+            return path+filename,filename  +'.pdb',path
+        
+        elif os.path.isfile(path + filename  +'.PDB'):
+            return path+filename,filename  +'.PDB',path
+        else:
+            return None,None,None
+        
+        
+    except:
+        path = os.getcwd()
+        
+        tupFnameExt = os.path.splitext(filename)
+        if tupFnameExt[1] == '.pdb' or tupFnameExt[1] == '.PDB':
+            if os.path.isfile(filename):
+                return True,path+filename
+            else:
+                return False,path+filename
+            
+            
+        
+        if path[-1] != '/':
+            path = path +'/'
+        if os.path.isfile(path + filename):
+            return True,path + filename
+        
+        elif os.path.isfile(path + filename  +'.pdb'):
+            return True,path + filename  +'.pdb'
+        
+        elif os.path.isfile(path + filename  +'.PDB'):
+            return True,path + filename  +'.PDB'
+        else:
+            return False,path + filename  +'.pdb'
+        
+        
+
+def dispFileExists(fileName):
+    inpStr='The file %s already exist, to overwrite file press "Y" or enter a new name: ' % fileName
+    do = True
+    while do:
+        inp = raw_input(inpStr)
+        if inp.upper()=='Y' or inp.upper()=='N':
+            return inp.upper()
+
+        
+def getFileName(path):
+
+    if path[-1]== '/':
+        filename = path + 'newpdb.pdb' 
+    else:
+        filename = path +'/newpdb.pdb'
+    
+    return filename
+
+def getMenuFileName(inpStr):
+   # inpStr='Enter Path name to save PDB File: '
+    inp = raw_input(inpStr)
+    return inp
+
+
+def getPath():
+    fileNameAndPath =''
+    inpStr='Enter Path name to save PDB File: '
+    fileN = getMenuFileName(inpStr)
+    do = True
+    while do:
+        if fileN in ['y','Y'] and fileNameAndPath != "":
+            return fileNameAndPath 
+        
+        if fileN =='':
+            fileN = os.getcwd()
+
+        validDir,path = funct.validDirectory(fileN)
+        if validDir:
+            fileNameAndPath = path + 'new.pdb'
+            if os.path.isfile(fileNameAndPath) == False:
+                return fileNameAndPath
+            else:
+                strConf= dispFileExists(fileNameAndPath)
+                if strConf.upper() =='Y':
+                    return fileNameAndPath
+            
+                
+                          
+        else:
+            fileExist,fileNameAndPath = getFile(fileN)
+            if fileExist == False:
+                return fileNameAndPath
+            
+
+            else:
+                strConf= dispFileExists(fileNameAndPath)
+                if strConf.upper() =='Y':
+                    return fileNameAndPath
+                
+
+
+
+def writeFile(path):    
+    f= open(path,'w')
+    for line in globalVar.lstFile:
+        f.write(line )
+        
+    f.close()
+             
+def updateHeader():
+    line = globalVar.lstFile[0]
+    newLine ='HEADER    %40s%9s   %4s\n' % (line[10:50],time.strftime("%d-%b-%y"),line[62:66]) 
+    globalVar.lstFile[0]=newLine
+                       
+                    
+def exportMain():
+        fileName = getPath()
+        updateHeader()
+        strWrite= writeFile(fileName)
+        

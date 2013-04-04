@@ -1,0 +1,89 @@
+import globalVar
+import funct
+import os.path
+import time
+
+
+
+ 
+
+def dispFileExists(fileName):
+    inpStr='The file %s already exist, to overwrite file press "Y" or "N" to enter new name: ' % fileName
+    do = True
+    while do:
+        inp = raw_input(inpStr)
+        if inp.upper()=='Y' or inp.upper()=='N':
+            return inp.upper()
+
+        
+def getFileName(path):
+
+    if path[-1]== '/':
+        filename = path + 'newpdb.pdb' 
+    else:
+        filename = path +'/newpdb.pdb'
+    
+    return filename
+
+def getMenuFileName(inpStr):
+   # inpStr='Enter Path name to save PDB File: '
+    inp = raw_input(inpStr)
+    return inp
+
+
+def getPath():
+#    fileName=''
+#    inpStr='Enter Path name to save PDB File: '
+
+    do = True
+    file = getMenuFileName('Enter Path name to save PDB File: ')
+    while do:
+        if fileN == "":
+            path = os.getcwd()
+            if path[-1] !='/':
+                path += '/'
+            fileName = path + 'newpdb.pdb'
+            if os.path.isfile(fileName):
+                inpStr = 'File: %s already exist, enter "Y" to overwrite or enter new file name:  '
+
+                fileN = getMenuFileName(inpStr)
+                if fileN in ['y','Y']:
+                    return fileName
+         else:
+                        
+        validDir,path = funct.validDirectory(file)
+        
+        if validDir:
+                fileName=getFileName(path)      
+        else:
+                fileName=getFileName(path)
+         
+        if funct.validFile(fileName):
+                inpStr = 'File: %s already exist, enter "Y" to overwrite or enter new file name:  '
+                inpConfirm = raw_input(inpStr)
+                if inpConfirm.upper()== "Y":
+                    return fileName
+                else:
+                    inpStr= 'Enter new file Name: '
+        else:
+            return fileName
+
+def writeFile(path):    
+    f= open(path,'w')
+    for line in globalVar.lstFile:
+        f.write(line )
+        
+    f.close()
+             
+def updateHeader():
+    line = globalVar.lstFile[0]
+    newLine ='HEADER    %40s%9s   %4s' % (line[10:50],time.strftime("%d-%b-%y"),line[62:66])
+    globalVar.lstFile[0]=newLine
+                       
+                    
+def exportMain():
+    if globalVar.saveFileName =='':
+        fileName = getPath()
+        updateHeader()
+        strWrite= writeFile(fileName)
+        globalVar.saveFileName=fileName

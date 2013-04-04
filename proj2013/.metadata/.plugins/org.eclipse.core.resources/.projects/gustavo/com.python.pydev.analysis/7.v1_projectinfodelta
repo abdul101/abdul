@@ -1,0 +1,17 @@
+INSTUPfunct
+/home/abdul/Documents/proj2013/gustavo/funct.py
+INFOS:&&2|1|2|0&&2|3|2|0&&2|4|2|0&&2|5|2|0&&2|6|2|0&&2|7|2|0&&2|8|2|0&&2|9|2|0&&2|10|2|0&&2|11|2|0&&2|12|2|0&&2|13|2|0&&2|14|2|0
+parseSequence=9
+validDirectory=7
+saveExit=1
+funct=2
+getCodon=14
+validFile=8
+exit=4
+fileOpen=5
+validpdbFile=6
+getFileName=10
+fileNameMenu=3
+closeFile=13
+openFileRead=12
+openFileWrite=11
