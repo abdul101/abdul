@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;gustavo/seqValidate&apos; to &apos;seqValidate.py&apos;" description="Rename resource &apos;seqValidate&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="seqValidate" name="seqValidate.py" stamp="1365145297207" updateReferences="true"/>
+</session>

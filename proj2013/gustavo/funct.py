@@ -15,7 +15,7 @@ def saveExit():
             return selection.upper()
         else:
             print
-            inpStr = 'Error, enter Y or M: '
+            inpStr = 'Error, enter M or E: '
             
 
 #gets path and checks if valid path, returns filename            

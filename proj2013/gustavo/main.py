@@ -100,4 +100,3 @@ def mainProgram():
 
 #initiates the program, calls menu
 mainProgram()
- 

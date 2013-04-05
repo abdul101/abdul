@@ -5,9 +5,11 @@
 		<item value="394" key="DIALOG_HEIGHT"/>
 		<item value="1|Sans|10.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
 	</section>
+	<section name="BreadcrumbItemDropDown">
+	</section>
 	<section name="org.eclipse.debug.ui.SELECT_LAUNCH_SHORTCUT_DIALOG">
-		<item value="307" key="DIALOG_WIDTH"/>
-		<item value="453" key="DIALOG_HEIGHT"/>
+		<item value="311" key="DIALOG_WIDTH"/>
+		<item value="457" key="DIALOG_HEIGHT"/>
 		<item value="1|Sans|10.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
 	</section>
 </section>

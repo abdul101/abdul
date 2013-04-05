@@ -24,7 +24,7 @@ def seqStartHelix_H(seqNo,helixNo,dicHelix,chainID):
             
         if int(lstHelix[0]) != int(helixNo):
             if (seqNo in range(int(lstHelix[4]),int(lstHelix[8])+1)) and chainID==lstHelix[3]:
-                return "Error, sequence Number not available "
+                return "Error, sequence number not available,position taken by helix no- %s: " % i
     return None
 
 
@@ -34,10 +34,10 @@ def seqEndHelix_H(seqNo,helixNo,dicHelix,chainID,initSeqNum):
         lstHelix=dicHelix[i] 
         if int(helixNo) != int(lstHelix[0]):
             if (seqNo in range(int(lstHelix[4]),int(lstHelix[8])+1)) and chainID==lstHelix[3]:
-                return "Error, sequence Number not available: "
-        else:
-            if seqNo <= initSeqNum:
-                return "Error sequence end before start: "
+                return "Error, sequence number not available,position taken by helix no- %s: " % i
+#        else:
+#            if seqNo <= initSeqNum:
+#                return "Error sequence end before start: "
     return None
 
 #validates start sequence of sheet
@@ -49,7 +49,7 @@ def seqStartSheet_H(seqNo,dicSheet,chainID):
         lstSheet= dicSheet[i]
 
         if (seqNo in range(int(lstSheet[5]),int(lstSheet[9])+1)) and chainID==lstSheet[4]:
-            return "Error, sequence Number not available: "
+            return "Error, sequence number not available,position taken by sheet no- %s: " % lstSheet[0]+lstSheet[1]
     return None
 
 
@@ -58,7 +58,7 @@ def seqEndSheet_H(seqNo,dicSheet,chainID):
     for i in dicSheet:
         lstSheet= dicSheet[i]
         if (seqNo in range(int(lstSheet[5]),int(lstSheet[9])+1)) and chainID==lstSheet[4]:
-                return "Error, sequence Number not available: "
+                return "Error, sequence number not available,position taken by sheet no- %s: " % lstSheet[0]+lstSheet[1]
     return None
 
     
@@ -123,24 +123,28 @@ def endSeqNumValid_H(helixNo,dicHelix,dicSheet,chainID,dicChain,initSeqNum):
     
     do = True
     while do:
-    
         inp=raw_input(inpStr)
         if inp.isdigit() and  (int(inp)  > initSeqNum ) and (int(inp) < len(lstChain[0]) ):
-            seqStr = seqEndHelix_H(int(inp),helixNo,dicHelix,chainID,initSeqNum)
-        
-            if seqStr != None:
-                inpStr = seqStr
-            else:
-                seqStr = seqEndSheet_H(int(inp),dicSheet,chainID)
-               
-                if seqStr != None:
-                    inpStr = seqStr
+            for i in range(int(initSeqNum),int(inp)+1):
+                helixStr = seqEndHelix_H(i,helixNo,dicHelix,chainID,initSeqNum)
+                if helixStr  != None:
+                    inpStr = helixStr
+                    break
                 else:
-                    lstChain = dicChain[chainID]
-                            
-                    inpStr = 'That position correspond to the amino acid %s.' % funct.getCodon(lstChain[0][int(inp)-1])
-                    print inpStr
-                    return int(inp)
+                    inpStr=None
+            
+                    sheetStr = seqEndSheet_H(i,dicSheet,chainID)
+                    if  sheetStr != None:
+                        inpStr =  sheetStr
+                        break
+                    else:
+                        inpStr=None
+                        
+            if inpStr==None:   
+                lstChain = dicChain[chainID]              
+                inpStr = 'That position correspond to the amino acid %s.' % funct.getCodon(lstChain[0][int(inp)-1])
+                print inpStr
+                return int(inp)
         else:
             inpStr = 'Error, initSeqNum must be between %s  and %s: ' % (initSeqNum,len(lstChain[0])) 
             
@@ -238,21 +242,20 @@ def seqStartSheet_S(seqNo,sheetNo,dicSheet,chainID):
         lstSheet= dicSheet[i]
         if i != sheetNo and chainID ==lstSheet[4]:
             if (seqNo in range(int(lstSheet[5]),int(lstSheet[9])+1)) :
-                    return "Error, sequence Number not available: "
+                    return "Error, sequence number not available,position taken by sheet no- %s: " % lstSheet[0]+lstSheet[1]
                 
     return None
 
-#checks seq start in helix
-def seqStartSheet(seqNo,dicSheet,chainID):
-    
-    for i in sorted(dicSheet):
-        
-        lstSheet= dicSheet[i] 
-
-        if (seqNo in range(int(lstSheet[5])-1,int(lstSheet[9])+1)) and chainID==lstSheet[4]:
-                return "Error, sequence Number not available: "
-    return None
-
+##checks seq start in helix
+#def seqStartSheet(seqNo,dicSheet,chainID):
+#    
+#    for i in sorted(dicSheet):
+#        
+#        lstSheet= dicSheet[i] 
+#
+#        if (seqNo in range(int(lstSheet[5])-1,int(lstSheet[9])+1)) and chainID==lstSheet[4]:
+#                return "Error, sequence Number not available: "
+#    return None
 
 #checks seq start in sheet
 def seqStartHelix_S(seqNo,dicHelix,chainID):
@@ -260,7 +263,7 @@ def seqStartHelix_S(seqNo,dicHelix,chainID):
         lstHelix=dicHelix[i] 
         if chainID==lstHelix[3]:    
             if (seqNo in range(int(lstHelix[4]),int(lstHelix[8])+1)) :
-                return "Error, sequence Number not available: "
+                return "Error, sequence number not available,position taken by helix no- %s: " % i
     return None
 
 
@@ -335,7 +338,7 @@ def seqEndHelix_S(seqNo,dicHelix,chainID):
         lstHelix= dicHelix[i]
         if chainID==lstHelix[3]:
             if (seqNo in range(int(lstHelix[4]),int(lstHelix[8])+1)) :
-                return "Error, sequence Number not available: "
+                return "Error, sequence Number not available,position taken by helix no- %s: " % i
     return None
 
 #validates sequence end number in sheet
@@ -344,15 +347,16 @@ def seqEndSheet_S(seqNo,dicSheet,chainID,sheetNo):
         lstSheet= dicSheet[i]
         if i != sheetNo and chainID==lstSheet[4]:
             if (seqNo in range(int(lstSheet[5]),int(lstSheet[9])+1)):
-                return "Error, sequence Number not available: "
+                return "Error, sequence number not available,position taken by sheet no- %s: " % lstSheet[0]+lstSheet[1]
     return None
 
-def seqEndSheet(seqNo,dicSheet,chainID):
-    for i in sorted(dicSheet):
-        lstSheet=dicSheet[i]
-        if (seqNo in range(int(lstSheet[5]),int(lstSheet[9])+1)) and chainID==lstSheet[4]:
-            return "Error, sequence Number not available: "
-    return None
+##validates sequence end number in 
+#def seqEndSheet(seqNo,dicSheet,chainID):
+#    for i in sorted(dicSheet):
+#        lstSheet=dicSheet[i]
+#        if (seqNo in range(int(lstSheet[5]),int(lstSheet[9])+1)) and chainID==lstSheet[4]:
+#            return "Error, sequence Number not available: "
+#    return None
 
 
             
@@ -362,28 +366,57 @@ def endSeqNumValid_S(sheetNo,dicHelix,dicSheet,chainID,dicChain,initSeqNum):
     lstChain=dicChain[chainID]
         
     inpStr='endSeqNum [%s] :' % lstSheet[9]
+    
+    
     do = True
     while do:
-        inp = raw_input(inpStr)
-        if inp.isdigit():
-            if   (int(inp)  > int(initSeqNum) ) and (int(inp) <= len(lstChain[0]) ):
-                seqStr = seqEndHelix_S(int(inp),dicHelix,chainID)
-                if seqStr != None:
-                    inpStr = seqStr
+        inp=raw_input(inpStr)
+        if inp.isdigit() and  (int(inp)  > initSeqNum ) and (int(inp) < len(lstChain[0]) ):
+            for i in range(int(initSeqNum),int(inp)+1):
+                helixStr = seqEndHelix_S(i,dicHelix,chainID)
+                if helixStr  != None:
+                    inpStr = helixStr
+                    break
                 else:
-                    seqStr = seqEndSheet_S(int(inp),dicSheet,chainID,sheetNo)
-               
-                if seqStr != None:
-                    inpStr = seqStr
-                else:
-                    lstChain = dicChain[chainID]        
-                    inpStr = 'That position correspond to the amino acid %s' % funct.getCodon(lstChain[0][int(inp)-1])
-                    print inpStr
-                    return inp
-            else:
-                inpStr = 'Error, endSeqNum must be between (%s - %s): ' % (initSeqNum,len(lstChain[0])) 
+                    inpStr=None
+            
+                    sheetStr = seqEndSheet_H(i,dicSheet,chainID,sheetNo)
+                    if  sheetStr != None:
+                        inpStr =  sheetStr 
+                        break
+                    else:
+                        inpStr=None
+                        
+            if inpStr==None:   
+                lstChain = dicChain[chainID]              
+                inpStr = 'That position correspond to the amino acid %s.' % funct.getCodon(lstChain[0][int(inp)-1])
+                print inpStr
+                return int(inp)
         else:
-            inpStr = 'Error, endSeqNum must be between (%s - %s): ' % (initSeqNum,len(lstChain[0])) 
+            inpStr = 'Error, initSeqNum must be between %s  and %s: ' % (initSeqNum,len(lstChain[0])) 
+    
+##    do = True
+##    while do:
+##        inp = raw_input(inpStr)
+##        if inp.isdigit():
+##            if   (int(inp)  > int(initSeqNum) ) and (int(inp) <= len(lstChain[0]) ):
+##                seqStr = seqEndHelix_S(int(inp),dicHelix,chainID)
+##                if seqStr != None:
+##                    inpStr = seqStr
+##                else:
+#                    seqStr = seqEndSheet_S(int(inp),dicSheet,chainID,sheetNo)
+#               
+#                if seqStr != None:
+#                    inpStr = seqStr
+#                else:
+#                    lstChain = dicChain[chainID]        
+#                    inpStr = 'That position correspond to the amino acid %s' % funct.getCodon(lstChain[0][int(inp)-1])
+#                    print inpStr
+#                    return inp
+#            else:
+#                inpStr = 'Error, endSeqNum must be between (%s - %s): ' % (initSeqNum,len(lstChain[0])) 
+#        else:
+#            inpStr = 'Error, endSeqNum must be between (%s - %s): ' % (initSeqNum,len(lstChain[0])) 
 
 #current Atom            
 def currentAtom(sheetNo,dicSheet):
