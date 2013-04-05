@@ -246,6 +246,16 @@ def seqStartSheet_S(seqNo,sheetNo,dicSheet,chainID):
                 
     return None
 
+##checks seq start in helix
+#def seqStartSheet(seqNo,dicSheet,chainID):
+#    
+#    for i in sorted(dicSheet):
+#        
+#        lstSheet= dicSheet[i] 
+#
+#        if (seqNo in range(int(lstSheet[5])-1,int(lstSheet[9])+1)) and chainID==lstSheet[4]:
+#                return "Error, sequence Number not available: "
+#    return None
 
 #checks seq start in sheet
 def seqStartHelix_S(seqNo,dicHelix,chainID):
@@ -257,7 +267,38 @@ def seqStartHelix_S(seqNo,dicHelix,chainID):
     return None
 
 
-      
+#checks init seq number
+#def initSeqNumValid(dicHelix,dicSheet,chainID,dicChain):
+#    
+#    lstChain=dicChain[chainID]
+#        
+#    inpStr='initSeqNum : ' 
+#    do = True
+#    while do:
+#        inp=raw_input(inpStr)
+#        if inp.isdigit():      
+#            if int(inp) < len(lstChain[0]) and int(inp) >=1 :
+#                seqStr = seqStartSheet(int(inp),dicSheet,chainID)
+#        
+#                if seqStr != None:
+#                    inpStr = seqStr
+#                else:
+#                    seqStr = seqStartHelix_S(int(inp),dicHelix,chainID)
+#                    if seqStr != None:
+#                        inpStr = seqStr
+#                    else:
+#                        lstChain = dicChain[chainID]
+#                            
+#                        inpStr = 'That position correspond to the amino acid %s' % funct.getCodon(lstChain[0][int(inp)-1])
+#                        print inpStr
+#                        print
+#                        return inp
+#            
+#            else:
+#                inpStr = 'Error, numbers only and  initSeqNum must be between (1 - %s): ' % len(lstChain[0])    
+#        else:
+#            inpStr = 'Error, numbers only and  initSeqNum must be between (1 - %s): ' % len(lstChain[0])  
+#          
           
 #main function for checking intitial seq number sheet          
 def initSeqNumValid_S(SheetNo,dicHelix,dicSheet,chainID,dicChain):
@@ -308,6 +349,14 @@ def seqEndSheet_S(seqNo,dicSheet,chainID,sheetNo):
             if (seqNo in range(int(lstSheet[5]),int(lstSheet[9])+1)):
                 return "Error, sequence number not available,position taken by sheet no- %s: " % lstSheet[0]+lstSheet[1]
     return None
+
+##validates sequence end number in 
+#def seqEndSheet(seqNo,dicSheet,chainID):
+#    for i in sorted(dicSheet):
+#        lstSheet=dicSheet[i]
+#        if (seqNo in range(int(lstSheet[5]),int(lstSheet[9])+1)) and chainID==lstSheet[4]:
+#            return "Error, sequence Number not available: "
+#    return None
 
 
             
@@ -499,7 +548,6 @@ def prevResSeq(sheetNo,dicSheet):
             inpStr='Error - numbers only: '
             
             
-## not sure to ask for ICODE because its seem to be always empty                
 # def currentIcode(sheetNo,dicSheet):
 #     lstSheet= dicSheet[sheetNo]
 #     do = True
@@ -556,9 +604,7 @@ def getSense():
                 inpStr = 'error, sense should be [-1,0,1]:  '
         else:
             inpStr = 'error, sense should be [-1,0,1]:  '
-
-
-## not sure to ask for ICODE because its seem to be always empty               
+                
 #def prevIcode(sheetNo,dicSheet):
 #    lstSheet= dicSheet[sheetNo]
 #    do = True

@@ -309,6 +309,14 @@ def seqEndSheet_S(seqNo,dicSheet,chainID,sheetNo):
                 return "Error, sequence number not available,position taken by sheet no- %s: " % lstSheet[0]+lstSheet[1]
     return None
 
+##validates sequence end number in 
+#def seqEndSheet(seqNo,dicSheet,chainID):
+#    for i in sorted(dicSheet):
+#        lstSheet=dicSheet[i]
+#        if (seqNo in range(int(lstSheet[5]),int(lstSheet[9])+1)) and chainID==lstSheet[4]:
+#            return "Error, sequence Number not available: "
+#    return None
+
 
             
 #main program to check end sequence number for sheet
@@ -499,7 +507,6 @@ def prevResSeq(sheetNo,dicSheet):
             inpStr='Error - numbers only: '
             
             
-## not sure to ask for ICODE because its seem to be always empty                
 # def currentIcode(sheetNo,dicSheet):
 #     lstSheet= dicSheet[sheetNo]
 #     do = True
@@ -556,9 +563,7 @@ def getSense():
                 inpStr = 'error, sense should be [-1,0,1]:  '
         else:
             inpStr = 'error, sense should be [-1,0,1]:  '
-
-
-## not sure to ask for ICODE because its seem to be always empty               
+                
 #def prevIcode(sheetNo,dicSheet):
 #    lstSheet= dicSheet[sheetNo]
 #    do = True
